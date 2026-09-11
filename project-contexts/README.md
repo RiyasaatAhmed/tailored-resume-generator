@@ -34,6 +34,11 @@ ADRs in MADR format. Copy [`0000-template.md`](decisions/0000-template.md) to st
 - [reference/data-model.md](reference/data-model.md) — entities, columns, JSON
   payload shapes, and the invariants the schema alone doesn't express. **Read
   before writing migrations or changing the rewrite output schema.**
-- [reference/source-workflow.md](reference/source-workflow.md) — the Claude Code
-  command this product reimplements, plus sample data. **Read before touching
-  prompts or the resume schema.**
+- [reference/source-workflow.md](reference/source-workflow.md) — how to read the
+  source command: which sections are load-bearing, which are candidate-specific
+  and must be stripped, and what not to port at all. **Read before touching
+  prompts or the resume schema** — and read it before `source-command.md`.
+- [reference/source-command.md](reference/source-command.md) — frozen verbatim
+  copy of the Claude Code command this product reimplements. The prompt and
+  quality specification, not a dependency. Do not edit; re-vendor from
+  `~/.claude/commands/` instead.

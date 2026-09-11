@@ -10,7 +10,8 @@ mapping your real wins onto their stated problems, and rewriting every bullet in
 their language. Done well it takes an hour per role, so almost nobody does it.
 
 This productizes a workflow that already exists and works: the owner's
-`/generate-custom-resume` Claude Code command (`~/.claude/commands/`).
+`/generate-custom-resume` Claude Code command, vendored at
+[reference/source-command.md](reference/source-command.md).
 
 ## Users
 
