@@ -1,0 +1,11 @@
+---
+description: Core project conventions — always in context
+globs:
+alwaysApply: true
+---
+
+<!--
+  TIER 2 (Cursor). Loaded every request because alwaysApply is true — keep it
+  thin. Anything portable belongs in AGENTS.md, which Cursor also reads.
+  Note: Cursor silently ignores plain .md files here. Keep the .mdc extension.
+-->

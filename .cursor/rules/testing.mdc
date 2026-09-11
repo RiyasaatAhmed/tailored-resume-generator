@@ -1,0 +1,6 @@
+---
+description: Testing conventions — how to write and run tests in this project
+# Attaches automatically when a matching file is in context:
+globs: **/*.test.*,**/*.spec.*,tests/**
+alwaysApply: false
+---
