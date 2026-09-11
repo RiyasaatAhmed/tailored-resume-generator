@@ -7,19 +7,9 @@
   HTML comments like this one are stripped before reaching Claude's context.
 -->
 
-## Overview
+No application code yet — the project is scoped but not scaffolded. There are no
+build, test, or run commands to give you.
 
-## Commands
-
-## Code style
-
-## Testing
-
-## Conventions
-
-## Gotchas
-
-## Deeper context
-
-Before feature work, read `project-contexts/README.md` — it indexes the
-product, stack, structure, decisions, and per-feature specs.
+Before any feature work, read `project-contexts/README.md`. It indexes the
+product brief, the stack and its hard constraints, four architecture decisions,
+and the data model.

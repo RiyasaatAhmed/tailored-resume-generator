@@ -8,13 +8,13 @@
 
 ## Foundations
 
-- [product.md](product.md) — what we're building, for whom, what success looks like
-- [tech.md](tech.md) — stack, versions, constraints, options considered and rejected
-- [structure.md](structure.md) — file layout, naming, module boundaries
+- [product.md](product.md) — what we're building, for whom, pricing, what's out
+  of scope
+- [tech.md](tech.md) — stack, hard constraints, and what was rejected and why
 
 ## Decisions
 
-ADRs in MADR format. Start from [`0000-template.md`](decisions/0000-template.md).
+ADRs in MADR format. Copy [`0000-template.md`](decisions/0000-template.md) to start.
 
 - [0001](decisions/0001-generation-pipeline.md) — why the tailoring workflow is a
   deterministic API pipeline, not a ported agent
@@ -25,12 +25,15 @@ ADRs in MADR format. Start from [`0000-template.md`](decisions/0000-template.md)
 - [0004](decisions/0004-pricing-and-quota.md) — plan structure, unit economics,
   and the reserve-then-settle credit meter
 
-## Specs
-
-- [specs/](specs/) — one folder per feature: `spec.md` → `plan.md` → `tasks.md`
-
 ## Reference
 
+- [reference/design-system.md](reference/design-system.md) — visual language:
+  color and type tokens, component specs, do's and don'ts. Derived from an
+  analysis of apple.com (via getdesign.md). **Read before building any UI.**
+  Tokens move into code once the app is scaffolded — see the note at the top.
+- [reference/data-model.md](reference/data-model.md) — entities, columns, JSON
+  payload shapes, and the invariants the schema alone doesn't express. **Read
+  before writing migrations or changing the rewrite output schema.**
 - [reference/source-workflow.md](reference/source-workflow.md) — the Claude Code
   command this product reimplements, plus sample data. **Read before touching
   prompts or the resume schema.**

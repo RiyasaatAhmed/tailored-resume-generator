@@ -18,10 +18,15 @@ This productizes a workflow that already exists and works: the owner's
 applying to a handful of roles a week, who already have a resume with real
 accomplishments and need it re-aimed per application.
 
-**Explicitly not the target for v1:** new grads and career changers. The output
-quality is bounded by the quality of the source material, and users without
-quantified accomplishments will get mediocre results. See "Quality depends on
-input" below.
+**Explicitly not the target for v1:** new grads and career changers. Output
+quality is bounded by the source material — "reduced load times" cannot become a
+strong bullet without a number, and the no-invention rule means the system will
+not manufacture one. Users with vague resumes get vague output and blame the
+product.
+
+Mitigation deferred past MVP: an onboarding interview that strengthens weak
+bullets ("by how much? measured how?"). The profile schema is designed so this
+can be added without a migration.
 
 ## Core flows
 
@@ -45,17 +50,6 @@ Most AI resume tools reword bullets. This one:
 - **Enforces one line per bullet** in the rendered PDF, with metrics bolded.
 
 These four are the product. Losing any of them makes it another rewording tool.
-
-## Quality depends on input
-
-The engine's output is bounded by the source material. "Reduced load times" cannot
-become a strong bullet without a number, and the no-invention rule means it will
-not manufacture one. Users with vague resumes will get vague output and will
-blame the product.
-
-Mitigation deferred past MVP: an onboarding interview that strengthens weak
-bullets ("by how much? measured how?"). Design the profile schema so this can be
-added without migration.
 
 ## Pricing
 

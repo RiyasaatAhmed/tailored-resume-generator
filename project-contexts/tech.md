@@ -33,25 +33,17 @@ the client subscribes to an SSE endpoint for progress
 (`researching` → `analyzing` → `rewriting` → `rendering`). Work must survive a
 closed tab.
 
-**Cost per generation is roughly $0.40.** Two `claude-opus-5` calls, one of them
-pulling several web pages into context. Every generation spends real money before
-it produces anything, which drives the metering design in
+**Every generation spends real money before it produces anything** (~$0.40, and
+the research call is most of it). Two consequences, both in
 [ADR-0004](decisions/0004-pricing-and-quota.md): reserve a credit atomically
-*before* enqueueing, release it if the job fails.
-
-**Cache company research briefs by domain (~7-day TTL).** The research call is
-the expensive half; a hit drops a generation to ~$0.14. Users cluster on the same
-employers, so this is the single highest-leverage cost optimization.
+*before* enqueueing and release it on failure; and cache company briefs by domain
+with a ~7-day TTL, which is the highest-leverage cost optimization available.
 
 **The rewrite rules are a cached system prompt.** They are identical for every
 user and every job (~200 lines, ported from Phase 1 Step 5 of the source
 command). Put them under `cache_control` — Opus 5's cache minimum is 512 tokens,
 so they qualify easily. Anything user- or job-specific goes *after* the
 breakpoint or the cache never hits.
-
-**Never invent facts.** Every metric in generated output must trace to the user's
-structured profile or their uploaded source document. This is a product promise,
-not a style preference — see `product.md`.
 
 ## External services
 
@@ -105,9 +97,7 @@ name, email, phone, address, full employment history. This is a cannot-launch
 issue, not a later hardening step. (Free-tier rate limits are also per *project*,
 not per key: ~100 requests/day on Pro-class models would cap the whole product at
 roughly 50 generations/day.) Fine for local development against your own resume;
-never for user data.
-
-**A multi-provider abstraction.** Dropped along with the Gemini plan. Single
-provider until there is a concrete second one — the seam would be at the pipeline
-*step* level, not a generic LLM client, because research (server-side web search)
-couples to a provider far more tightly than the other steps.
+never for user data. A multi-provider abstraction was dropped along with it — if
+a second provider ever lands, the seam is at the pipeline *step* level, not a
+generic LLM client, because the research step couples to server-side web search
+far more tightly than the others.
