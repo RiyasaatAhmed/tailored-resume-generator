@@ -63,11 +63,13 @@ content width            7.068 in  = 508.9 pt
 502.7 pt ÷ (0.545em × 9.5pt) ≈  97 characters   bold-heavy bullet
 ```
 
-The longest bullet in the shipped base resume is **107 characters** and sets on
-one line, so the true ceiling is a shade above the estimate. **90–105 is the
-authoring range with headroom** — the low end exists because a bullet carrying
-2–4 bold spans (which the rewrite rules require) is measurably wider than the
-same bullet in regular weight.
+**Measured, not just predicted.** Rendering the base resume through Playwright
+under print emulation gives a bullet body of **6.987 in / 503.1 pt** against the
+6.982 in predicted above — 0.4 pt off. The longest bullet in the shipped base
+resume is **113 characters** and sets on one line, so the real ceiling is
+comfortably above the estimate. **90–105 is the authoring range with headroom** —
+the low end exists because a bullet carrying 2–4 bold spans (which the rewrite
+rules require) is measurably wider than the same bullet in regular weight.
 
 Change the font, the size, or the margins and this range is silently wrong —
 taking invariant #6 and a stated success criterion with it. If any of them must
@@ -148,21 +150,69 @@ history is mostly small companies. Add `experiences.about` (text, nullable) and 
 matching optional `about` in the `resume_json` experience objects, or decide
 deliberately to drop the line.
 
-## Playwright migration — verify, do not assume
+## Playwright migration — verified
 
-Three Chrome-headless specifics that may not transfer cleanly:
+The exporter's own `base-frontend.html` was rendered through Playwright +
+bundled Chromium and compared against `base-frontend.pdf`, which Chrome headless
+produced from those same bytes. Same input, same CSS — isolating the driver.
 
-1. **`--no-pdf-header-footer`** → Playwright's `page.pdf({ displayHeaderFooter: false })`,
-   which is already the default. Confirm no default header/footer appears.
-2. **`@page { size: A4 }`** is honored by Chrome's print path. Playwright also
-   accepts `page.pdf({ format: 'A4' })`. Set it in both places rather than
-   relying on the CSS alone.
-3. **The link patch.** `patch_pdf_links_new_tab()` is a regex rewrite over the
-   emitted PDF bytes, adding `/NewWindow true` to URI actions, and its own
-   comment flags it as fragile. Check whether Playwright's `page.pdf()` needs it
-   at all before porting it — and if the only effect is whether links open in a
-   new tab, consider dropping it rather than carrying a byte-level PDF hack into
-   the product.
+**Result: parity.**
 
-Render a known-good input through Playwright and diff against the corresponding
-file in `~/Desktop/portfolio/resume/tailored/` before trusting any of this.
+| | Chrome headless | Playwright |
+|---|---|---|
+| Pages | 2 | 2 |
+| Extracted text | 4,919 chars | 4,919 chars — **identical** |
+| Link annotations | 19 | 19 |
+| Page size | 594.96 × 841.92 pt | 595.92 × 842.88 pt |
+
+The 0.96 pt page-size drift (0.16%, ~0.34 mm) is each driver's own A4 rounding.
+Content lays out identically, so it does not matter — but it does mean a
+byte-level PDF diff will never be clean. Compare extracted text and layout, not
+bytes.
+
+### `format: 'A4'` is mandatory, not belt-and-braces
+
+**Playwright ignores `@page { size: A4 }`.** Dropping `format: 'A4'` from
+`page.pdf()` produces **612 × 792 pt — US Letter**, silently. The CSS transfers;
+the page size does not. Letter is 8.5 in wide, so the content measure grows,
+more characters fit per line, and the 90–105 rule is quietly wrong in the
+permissive direction — bullets that should have been flagged as too long sail
+through. Always pass it explicitly:
+
+```js
+await page.pdf({ path, format: 'A4', printBackground: true, displayHeaderFooter: false });
+```
+
+`displayHeaderFooter: false` is already the Playwright default, so the
+`--no-pdf-header-footer` flag needs no equivalent — but state it anyway.
+
+### Wrap-checking must run under print emulation
+
+Measuring bullet heights on a default page measures the **screen** layout, where
+the viewport is 1280 px (~13.3 in) and nothing wraps — a false pass. Set both:
+
+```js
+const page = await browser.newPage({ viewport: { width: Math.round(7.068 * 96), height: 950 } });
+await page.emulateMedia({ media: 'print' });   // @page + break-inside only apply in print
+```
+
+That 678 px is the A4 content width at 96 dpi, and is why the source command's
+own wrap-check used `--window-size=680,950`.
+
+With that in place, bullet wrapping is checkable in the DOM before the PDF is
+even written — `round(el.getBoundingClientRect().height / lineHeight) > 1` — so
+invariant #6 can be enforced as a cheap assertion in the render step rather than
+by screenshotting and re-prompting.
+
+### The link patch is live — dropping it is a real decision
+
+`patch_pdf_links_new_tab()` rewrites the emitted PDF bytes to add
+`/NewWindow true` to URI actions, and its own comment calls it fragile. It is
+**not** dead code: every production file carries 14–18 flags
+(`base-frontend.pdf`, at 0, predates it or came via another path). Playwright's
+`page.pdf()` does not add them.
+
+So the question is live: the only effect is whether a click opens in a new tab
+rather than navigating the PDF viewer away. Decide deliberately — carrying a
+byte-level regex over PDF internals into a paid product is a real maintenance
+cost for that.
