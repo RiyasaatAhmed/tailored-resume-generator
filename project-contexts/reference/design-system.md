@@ -296,6 +296,13 @@ the profile editor and the generation review. Both are documented below.
 Inter is the substitute, with the tracking and line-height corrections given
 there.
 
+**This file does not cover the generated resume PDF.** That is a separate
+surface with its own derived spec — see
+[resume-template.md](resume-template.md). Do not apply the tokens below to the
+document: its typography is calibrated so that "one line per bullet, 90–105
+characters" holds, and substituting a different font or size silently breaks
+that rule.
+
 ## Overview
 
 Apple's web presence is a masterclass in **reverent product photography framed by near-invisible UI**. Every page is a stack of edge-to-edge product "tiles" — alternating light and dark canvases, each centered on a hero headline, a one-line tagline, two tiny blue pill CTAs, and an impossibly crisp product render. Nothing competes with the product. Typography is confident but quiet; color is either pure white, an off-white parchment, or a near-black tile; interactive elements are a single, quiet blue.

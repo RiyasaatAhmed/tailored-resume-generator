@@ -31,6 +31,11 @@ ADRs in MADR format. Copy [`0000-template.md`](decisions/0000-template.md) to st
   color and type tokens, component specs, do's and don'ts. Derived from an
   analysis of apple.com (via getdesign.md). **Read before building any UI.**
   Tokens move into code once the app is scaffolded — see the note at the top.
+- [reference/resume-template.md](reference/resume-template.md) — the visual spec
+  for the **generated PDF**: page geometry, type scale, and the measure the
+  "90–105 characters per bullet" rule is derived from. Distinct from the design
+  system, which covers the app. **Read before building the renderer or changing
+  any bullet-length rule.**
 - [reference/data-model.md](reference/data-model.md) — entities, columns, JSON
   payload shapes, and the invariants the schema alone doesn't express. **Read
   before writing migrations or changing the rewrite output schema.**
