@@ -13,10 +13,20 @@ npm run build       # production build
 npm test            # vitest run (launches real Chromium for render tests)
 npm run typecheck   # tsc --noEmit
 npm run lint        # eslint
+npm run db:generate # drizzle-kit generate — after editing src/db/schema.ts
+npm run db:migrate  # apply migrations to $DATABASE_URL
 ```
 
-Scaffolded, but only one slice is built: the PDF renderer
-(`src/lib/resume/`). No database, auth, billing, or generation pipeline yet.
+**`npm test` needs a running Docker daemon.** The database tests start a real
+`postgres:17-alpine` via Testcontainers, because the tests that matter most —
+two transactions racing for the last credit, `pg-boss` and SKIP LOCKED — need
+concurrent connections that PGlite cannot give.
+
+Built so far: the PDF renderer (`src/lib/resume/`) and the database schema
+(`src/db/`). No auth, billing, or generation pipeline yet.
+
+`drizzle/0000_init.sql` carries a hand-added `CREATE EXTENSION citext` that
+drizzle-kit does not emit. Re-add it if that migration is ever regenerated.
 
 `src/lib/resume/css.ts` is ported **verbatim** from the Python exporter. The
 "one line per bullet, 90–105 characters" rule holds only at that exact
