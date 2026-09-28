@@ -27,7 +27,17 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      {/*
+        Browser extensions inject attributes into <body> before React hydrates
+        (Bitdefender writes bis_register and __processed_<uuid>__), which React
+        reports as a hydration mismatch. Next lists extensions as a known cause
+        — nextjs.org/docs/messages/react-hydration-error, cause 5 — and both
+        React and Next document suppressHydrationWarning as the escape hatch.
+        It only works one level deep, so this covers <body> and nothing nested.
+      */}
+      <body className="min-h-full flex flex-col" suppressHydrationWarning>
+        {children}
+      </body>
     </html>
   );
 }
