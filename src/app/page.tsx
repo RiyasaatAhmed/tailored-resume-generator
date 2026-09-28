@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { getCurrentUser } from "@/lib/auth/cookies";
 import { logOutAction } from "./(auth)/actions";
+import { ResendVerification } from "./(auth)/resend-verification";
 
 /**
  * Landing surface. Reads the session so signing in is visible end to end.
@@ -48,11 +49,7 @@ export default async function Home() {
         {user ? (
           <div className="flex flex-col items-center gap-6">
             <p className="type-caption text-muted">Signed in as {user.email}</p>
-            {!user.emailVerifiedAt ? (
-              <p className="type-caption text-warning">
-                Email not verified
-              </p>
-            ) : null}
+            {!user.emailVerifiedAt ? <ResendVerification /> : null}
             <div className="flex items-center gap-6">
               <Link href="/profile">
                 <Button type="button">Edit profile</Button>

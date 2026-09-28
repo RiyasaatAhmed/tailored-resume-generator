@@ -159,6 +159,51 @@ export async function revokeAllSessions(db: Database, userId: string) {
 }
 
 /**
+ * Issues a fresh verification token, invalidating any outstanding ones.
+ *
+ * Marking the old tokens consumed matters: without it, an old link forwarded to
+ * someone else or sitting in a compromised mailbox stays usable for its full
+ * 24 hours after the user has asked for a new one.
+ *
+ * Returns null if the address is already verified, so the caller can avoid
+ * sending a pointless email.
+ */
+export async function issueVerificationToken(
+  db: Database,
+  userId: string,
+): Promise<string | null> {
+  const [user] = await db
+    .select()
+    .from(users)
+    .where(eq(users.id, userId))
+    .limit(1);
+  if (!user || user.emailVerifiedAt) return null;
+
+  const { token, tokenHash } = createOneTimeToken();
+  const now = new Date();
+
+  await db.transaction(async (tx) => {
+    await tx
+      .update(emailVerificationTokens)
+      .set({ consumedAt: now })
+      .where(
+        and(
+          eq(emailVerificationTokens.userId, userId),
+          isNull(emailVerificationTokens.consumedAt),
+        ),
+      );
+
+    await tx.insert(emailVerificationTokens).values({
+      userId,
+      tokenHash,
+      expiresAt: new Date(Date.now() + VERIFICATION_TOKEN_TTL_MS),
+    });
+  });
+
+  return token;
+}
+
+/**
  * Consumes a verification token. Consumed rows are kept rather than deleted so
  * a reused link can say "already used" instead of "invalid".
  */

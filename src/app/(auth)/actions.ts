@@ -1,11 +1,24 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 
 import { getDatabase } from "@/db/client";
-import { clearSessionCookie, readSession, setSessionCookie } from "@/lib/auth/cookies";
-import { AuthError, logIn, revokeAllSessions, signUp } from "@/lib/auth/service";
+import {
+  clearSessionCookie,
+  getCurrentUser,
+  readSession,
+  setSessionCookie,
+} from "@/lib/auth/cookies";
+import {
+  AuthError,
+  issueVerificationToken,
+  logIn,
+  revokeAllSessions,
+  signUp,
+} from "@/lib/auth/service";
+import { sendVerificationEmail } from "@/lib/email/send-verification";
 
 /**
  * Server Actions for the auth screens.
@@ -63,15 +76,10 @@ export async function signUpAction(
       tokenVersion: user.tokenVersion,
     });
 
-    // No email provider is chosen yet (tech.md). Until one is, the link goes to
-    // the server log so the flow is completable in development. Email
-    // verification gates the first generation, not sign-in, so this does not
-    // block anything else being built.
-    if (process.env.NODE_ENV !== "production") {
-      console.info(
-        `[auth] verification link: /verify-email?token=${verificationToken}`,
-      );
-    }
+    // Sending never throws — signup has already committed, and a provider
+    // outage must not surface as a failed signup on an account the user then
+    // cannot re-create. The resend button is the recovery path.
+    await sendVerificationEmail({ to: user.email, token: verificationToken });
   } catch (error) {
     if (error instanceof AuthError) {
       return { error: error.message, values: { email: submittedEmail } };
@@ -104,6 +112,42 @@ export async function logInAction(
   }
 
   redirect("/");
+}
+
+/**
+ * Re-sends the verification link.
+ *
+ * Throttled per user. Without a limit this is an open relay pointed at any
+ * address someone can sign up with, and it burns the provider's send quota.
+ * In-memory is enough for a single long-running Node host (ADR-0003); move it
+ * to Postgres if the worker is ever split out.
+ */
+const RESEND_COOLDOWN_MS = 60_000;
+const lastResendAt = new Map<string, number>();
+
+export async function resendVerificationAction(): Promise<{
+  sent?: boolean;
+  error?: string;
+}> {
+  const user = await getCurrentUser();
+  if (!user) return { error: "Sign in first" };
+  if (user.emailVerifiedAt) return { error: "Your email is already confirmed" };
+
+  const previous = lastResendAt.get(user.id) ?? 0;
+  const waitMs = RESEND_COOLDOWN_MS - (Date.now() - previous);
+  if (waitMs > 0) {
+    return {
+      error: `Wait ${Math.ceil(waitMs / 1000)}s before requesting another`,
+    };
+  }
+  lastResendAt.set(user.id, Date.now());
+
+  const token = await issueVerificationToken(getDatabase(), user.id);
+  if (!token) return { error: "Your email is already confirmed" };
+
+  await sendVerificationEmail({ to: user.email, token });
+  revalidatePath("/");
+  return { sent: true };
 }
 
 export async function logOutAction() {
