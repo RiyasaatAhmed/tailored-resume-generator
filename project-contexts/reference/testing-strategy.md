@@ -37,7 +37,7 @@ here so they stop being prose:
 | HTTP boundary | **MSW** | Intercepts Anthropic and Stripe at the network layer, not the module layer |
 | Route handlers | **`next-test-api-route-handler`** | Exercises the real handler with real `Request`/`Response` |
 | Browser / PDF | **Playwright** | Already a runtime dependency; no second browser stack |
-| PDF assertions | **`pdf-parse`** for text, **`pixelmatch`** for visual | Text catches semantic regressions; pixels catch layout |
+| PDF assertions | **`pdf-parse`** | Extracted text catches semantic regressions; byte comparison never will |
 
 **Testcontainers, not PGlite — and this is not a preference.** PGlite is real
 Postgres compiled to WASM and is genuinely faster, but it is

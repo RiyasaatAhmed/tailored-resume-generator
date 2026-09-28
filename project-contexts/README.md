@@ -29,11 +29,10 @@ ADRs in MADR format. Copy [`0000-template.md`](decisions/0000-template.md) to st
 
 - [reference/design-system.md](reference/design-system.md) — visual language:
   color and type tokens, component specs, do's and don'ts. Derived from an
-  analysis of bugatti.com (via getdesign.md). Black canvas, no light mode, a
-  three-family type trinity, and no accent color. **Read before building any
+  analysis of bugatti.com (via getdesign.md), which is also the standing
+  reference for anything this file doesn't answer. **Read before building any
   UI.** Tokens move into code once the app is scaffolded — see the note at the
-  top, which also covers what stands in for the photography this product
-  doesn't have.
+  top.
 - [reference/resume-template.md](reference/resume-template.md) — the visual spec
   for the **generated PDF**: page geometry, type scale, and the measure the
   "90–105 characters per bullet" rule is derived from. Distinct from the design
