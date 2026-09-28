@@ -39,6 +39,10 @@ ADRs in MADR format. Copy [`0000-template.md`](decisions/0000-template.md) to st
 - [reference/data-model.md](reference/data-model.md) — entities, columns, JSON
   payload shapes, and the invariants the schema alone doesn't express. **Read
   before writing migrations or changing the rewrite output schema.**
+- [reference/testing-strategy.md](reference/testing-strategy.md) — what to test,
+  at which layer, and what to leave untested. Collects the testing obligations
+  the ADRs and the data model levied with nowhere to record them. **Read before
+  writing the first test or setting up CI.**
 - [reference/source-workflow.md](reference/source-workflow.md) — how to read the
   source command: which sections are load-bearing, which are candidate-specific
   and must be stripped, and what not to port at all. **Read before touching
