@@ -38,10 +38,17 @@ Letter, which is wider and lets over-long bullets through.
 ## Next.js and React changes: check the official docs first
 
 **Before deciding anything Next.js- or React-related, read the official
-documentation — [nextjs.org/docs](https://nextjs.org/docs) and
-[react.dev](https://react.dev) — and follow what it says.** This applies to
-routing, rendering modes, caching, Server Components, Server Actions, route
-handlers, middleware, config, hooks, and any API you are about to call.
+documentation and follow what it says.** This applies to routing, rendering
+modes, caching, Server Components, Server Actions, route handlers, middleware,
+config, hooks, and any API you are about to call.
+
+Read in this order:
+
+1. **`node_modules/next/dist/docs/`** — the docs for the exact version installed
+   here. Prefer these: the website documents the current release, which may not
+   be ours. See the auto-generated block at the bottom of this file.
+2. [nextjs.org/docs](https://nextjs.org/docs) and [react.dev](https://react.dev)
+   for anything the local copy doesn't cover.
 
 Official docs outrank everything else here: your training memory, blog posts,
 Stack Overflow, and the third-party skills vendored in `.claude/skills/`. Those
@@ -56,3 +63,13 @@ procedure for this.
 Before any feature work, read `project-contexts/README.md`. It indexes the
 product brief, the stack and its hard constraints, four architecture decisions,
 the data model, and the testing strategy.
+
+<!-- BEGIN:nextjs-agent-rules -->
+
+# This is NOT the Next.js you know
+
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+
+This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+
+<!-- END:nextjs-agent-rules -->
