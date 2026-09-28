@@ -7,14 +7,14 @@
 
 ## Stack
 
-| Layer | Choice |
-|---|---|
-| App | Next.js (App Router), TypeScript — one repo, one deploy |
-| DB | PostgreSQL + Drizzle ORM |
-| Auth | Hand-rolled: `argon2` password hashing, `jose` for JWT, httpOnly cookie |
-| Jobs | `pg-boss` — Postgres-backed queue, no Redis |
-| LLM | Anthropic Messages API, `claude-opus-5` |
-| PDF | Playwright → Chromium, rendering an HTML resume template |
+| Layer   | Choice                                                                  |
+| ------- | ----------------------------------------------------------------------- |
+| App     | Next.js (App Router), TypeScript — one repo, one deploy                 |
+| DB      | PostgreSQL + Drizzle ORM                                                |
+| Auth    | Hand-rolled: `argon2` password hashing, `jose` for JWT, httpOnly cookie |
+| Jobs    | `pg-boss` — Postgres-backed queue, no Redis                             |
+| LLM     | Anthropic Messages API, `claude-opus-5`                                 |
+| PDF     | Playwright → Chromium, rendering an HTML resume template                |
 | Hosting | A Node-process host (Railway / Fly / Render), **not** Vercel serverless |
 
 ## Constraints
@@ -36,13 +36,13 @@ closed tab.
 **Every generation spends real money before it produces anything** (~$0.40, and
 the research call is most of it). Two consequences, both in
 [ADR-0004](decisions/0004-pricing-and-quota.md): reserve a credit atomically
-*before* enqueueing and release it on failure; and cache company briefs by domain
+_before_ enqueueing and release it on failure; and cache company briefs by domain
 with a ~7-day TTL, which is the highest-leverage cost optimization available.
 
 **The rewrite rules are a cached system prompt.** They are identical for every
 user and every job (~200 lines, ported from Phase 1 Step 5 of the source
 command). Put them under `cache_control` — Opus 5's cache minimum is 512 tokens,
-so they qualify easily. Anything user- or job-specific goes *after* the
+so they qualify easily. Anything user- or job-specific goes _after_ the
 breakpoint or the cache never hits.
 
 ## External services
@@ -63,7 +63,7 @@ breakpoint or the cache never hits.
 **Calling `/generate-custom-resume` directly.** It is not callable. It is a
 Claude Code slash command that assumes a local filesystem, a specific home
 directory, five Python export scripts, headless-Chrome screenshotting, and
-human-in-the-loop chat gates. It is the *specification* for the pipeline, not a
+human-in-the-loop chat gates. It is the _specification_ for the pipeline, not a
 dependency of it.
 
 **Claude Agent SDK.** Would be the closest 1:1 port, but means running an agentic
@@ -91,13 +91,13 @@ Cut scope, not model. Cache briefs and tighten quotas instead.
 
 **Gemini's free tier for the MVP.** Considered and rejected on data handling, not
 cost. On Google's free tier, submitted content is used to improve Google products
-and *human reviewers may read API input and output*; Google explicitly says not to
+and _human reviewers may read API input and output_; Google explicitly says not to
 send personal information to non-paid services. Our entire input is resumes —
 name, email, phone, address, full employment history. This is a cannot-launch
-issue, not a later hardening step. (Free-tier rate limits are also per *project*,
+issue, not a later hardening step. (Free-tier rate limits are also per _project_,
 not per key: ~100 requests/day on Pro-class models would cap the whole product at
 roughly 50 generations/day.) Fine for local development against your own resume;
 never for user data. A multi-provider abstraction was dropped along with it — if
-a second provider ever lands, the seam is at the pipeline *step* level, not a
+a second provider ever lands, the seam is at the pipeline _step_ level, not a
 generic LLM client, because the research step couples to server-side web search
 far more tightly than the others.
