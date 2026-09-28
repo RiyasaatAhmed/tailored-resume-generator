@@ -53,9 +53,16 @@ export default async function Home() {
                 Email not verified
               </p>
             ) : null}
-            <form action={logOutAction}>
-              <Button type="submit">Sign out</Button>
-            </form>
+            <div className="flex items-center gap-6">
+              <Link href="/profile">
+                <Button type="button">Edit profile</Button>
+              </Link>
+              <form action={logOutAction}>
+                <button type="submit" className="type-button text-muted underline">
+                  Sign out
+                </button>
+              </form>
+            </div>
           </div>
         ) : (
           <div className="flex flex-col items-center gap-4 sm:flex-row">
