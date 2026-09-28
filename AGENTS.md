@@ -16,6 +16,7 @@ npm run lint        # eslint
 npm run db:generate # drizzle-kit generate — after editing src/db/schema.ts
 npm run db:migrate  # apply migrations to $DATABASE_URL
 npm run db:seed     # plans (trial/pro/power) — signup fails without these
+npm run db:studio   # browse the database at https://local.drizzle.studio
 ```
 
 Local database:
