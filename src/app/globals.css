@@ -1,26 +1,224 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/*
+  The design system from project-contexts/reference/design-system.md, moved out
+  of markdown and into code. Per the note at the top of that file, THIS is now
+  the source of truth for token values — the markdown keeps the prose (component
+  behaviour, the do's and don'ts, section rhythm) that code cannot express.
+
+  The system has no light mode. Black canvas, white type, no accent colour.
+  Every typeface stays at weight 400: emphasis comes from size, tracking, case,
+  and family contrast — never from bold.
+
+  Substitutes are in use. The three Bugatti faces are licensed and not public
+  web fonts; design-system.md names Saira Condensed / Cormorant Garamond /
+  JetBrains Mono, and preserving the three-family split matters more than an
+  exact typeface match.
+*/
+
+@theme {
+  /* Brand — white is the only brand colour. */
+  --color-primary: #ffffff;
+  --color-ink: #ffffff;
+  --color-on-primary: #000000;
+  --color-on-dark: #ffffff;
+  --color-on-photo: #ffffff;
+
+  /* The single non-monochrome token in the system. Inline anchors only. */
+  --color-link: #c3d9f3;
+
+  /* Surfaces — all within a hair of black. */
+  --color-canvas: #000000;
+  --color-surface-soft: #0d0d0d;
+  --color-surface-card: #141414;
+  --color-surface-elevated: #1f1f1f;
+
+  /* Hairlines. hairline-strong is the input underline. */
+  --color-hairline: #262626;
+  --color-hairline-strong: #3a3a3a;
+
+  /* Text */
+  --color-body: #cccccc;
+  --color-body-strong: #e6e6e6;
+  --color-muted: #999999;
+  /*
+    design-system.md specifies #666666, which is 3.66:1 on black and fails
+    WCAG AA for the small legal/copyright text it is assigned to. Lifted to
+    #757575 (4.6:1). Every other foreground token already passes: muted 7.4:1,
+    body 13.1:1, link 14.5:1.
+  */
+  --color-muted-soft: #757575;
+
+  /* Semantic — rare on marketing surfaces, needed in the app's forms. */
+  --color-warning: #d4a017;
+  --color-success: #5fa657;
+  /*
+    Not in the source analysis. bugatti.com has almost no forms, so it never had
+    to define an error state; this app's interior is mostly forms. Chosen to
+    clear AA on black (5.1:1) and to read as a warning without introducing a
+    saturated brand red, which would break the monochrome contract.
+  */
+  --color-danger: #e5736b;
+
+  /* Type families */
+  --font-display: var(--font-display-loaded), "Saira Condensed", -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, sans-serif;
+  --font-body: var(--font-body-loaded), "Cormorant Garamond", Garamond, "Times New Roman", serif;
+  --font-mono: var(--font-mono-loaded), "JetBrains Mono", ui-monospace, "SF Mono", "Cascadia Mono",
+    monospace;
+
+  /* Radius is binary: everything is square except buttons, which are pills. */
+  --radius-none: 0px;
+  --radius-pill: 9999px;
+
+  /*
+    Spacing is NOT redefined here, deliberately.
+
+    design-system.md names its scale xxs/xs/sm/md/lg/xl/xxl. Registering those
+    under Tailwind's `--spacing-*` namespace silently breaks t-shirt sizing:
+    `max-w-sm` resolves against the spacing scale before `--container-*`, so
+    `--spacing-sm: 12px` turns `max-w-sm` into 12px instead of 24rem and every
+    layout collapses.
+
+    Tailwind's default 4px-based scale already expresses the design tokens, so
+    use the numeric utilities and this mapping:
+
+      xxs  4px   -> 1      lg   24px  -> 6
+      xs   8px   -> 2      xl   40px  -> 10
+      sm   12px  -> 3      xxl  64px  -> 16
+      md   16px  -> 4      section 120px -> 30
+  */
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/*
+  Display type: uppercase, wide-tracked, weight 400. Tracking is the hierarchy —
+  6px on the wordmark down to 1px on the smallest title. Tightening it is a
+  brand violation.
+*/
+@utility type-display-xl {
+  font-family: var(--font-display);
+  font-size: 64px;
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: 4px;
+  text-transform: uppercase;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+@utility type-display-lg {
+  font-family: var(--font-display);
+  font-size: 48px;
+  font-weight: 400;
+  line-height: 1.15;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+}
+
+@utility type-display-md {
+  font-family: var(--font-display);
+  font-size: 32px;
+  font-weight: 400;
+  line-height: 1.2;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+@utility type-display-sm {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 400;
+  line-height: 1.3;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+/* The widest tracking in the system. */
+@utility type-wordmark {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: 6px;
+  text-transform: uppercase;
+}
+
+@utility type-title-md {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 1.3;
+  letter-spacing: 1px;
+}
+
+@utility type-title-sm {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.3;
+  letter-spacing: 1.5px;
+}
+
+/* Monospace: buttons, nav, captions, dates. Always uppercase. */
+@utility type-caption {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 1.4;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+@utility type-button {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+}
+
+@utility type-nav {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.4;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+/* Body: the serif, sentence case, no tracking. Never in a button. */
+@utility type-body-md {
+  font-family: var(--font-body);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: 0;
+}
+
+@utility type-body-sm {
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: 0;
+}
+
+html {
+  color-scheme: dark;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-canvas);
+  color: var(--color-body);
+  font-family: var(--font-body);
+}
+
+::selection {
+  background: var(--color-on-dark);
+  color: var(--color-canvas);
+}
+
+/* Focus is visible and white — there is no accent colour to use instead. */
+:focus-visible {
+  outline: 1px solid var(--color-on-dark);
+  outline-offset: 2px;
 }

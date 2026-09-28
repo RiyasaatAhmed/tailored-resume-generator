@@ -17,6 +17,12 @@ npm run db:generate # drizzle-kit generate — after editing src/db/schema.ts
 npm run db:migrate  # apply migrations to $DATABASE_URL
 ```
 
+**Never register the design system's spacing scale under Tailwind's
+`--spacing-*` namespace.** `max-w-*` resolves against spacing before
+`--container-*`, so a `--spacing-sm: 12px` token silently turns `max-w-sm` into
+12px and collapses every layout. `globals.css` documents the token → numeric
+utility mapping instead.
+
 **`npm test` needs a running Docker daemon.** The database tests start a real
 `postgres:17-alpine` via Testcontainers, because the tests that matter most —
 two transactions racing for the last credit, `pg-boss` and SKIP LOCKED — need

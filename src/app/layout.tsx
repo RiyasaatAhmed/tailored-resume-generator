@@ -1,15 +1,29 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Saira_Condensed, Cormorant_Garamond, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+/*
+  The three Bugatti faces are licensed and not public web fonts. These are the
+  substitutes design-system.md names; preserving the three-family split —
+  display / serif body / monospace — carries the voice, not the exact typeface.
+  Every face loads weight 400 only: the system has no bold role.
+*/
+const display = Saira_Condensed({
+  variable: "--font-display-loaded",
   subsets: ["latin"],
+  weight: "400",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const body = Cormorant_Garamond({
+  variable: "--font-body-loaded",
   subsets: ["latin"],
+  weight: "400",
+});
+
+const mono = JetBrains_Mono({
+  variable: "--font-mono-loaded",
+  subsets: ["latin"],
+  weight: "400",
 });
 
 export const metadata: Metadata = {
@@ -25,7 +39,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${display.variable} ${body.variable} ${mono.variable} h-full`}
     >
       {/*
         Browser extensions inject attributes into <body> before React hydrates
@@ -35,7 +49,10 @@ export default function RootLayout({
         React and Next document suppressHydrationWarning as the escape hatch.
         It only works one level deep, so this covers <body> and nothing nested.
       */}
-      <body className="min-h-full flex flex-col" suppressHydrationWarning>
+      <body
+        className="min-h-full flex flex-col bg-canvas antialiased"
+        suppressHydrationWarning
+      >
         {children}
       </body>
     </html>
