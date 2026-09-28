@@ -15,6 +15,15 @@ npm run typecheck   # tsc --noEmit
 npm run lint        # eslint
 npm run db:generate # drizzle-kit generate — after editing src/db/schema.ts
 npm run db:migrate  # apply migrations to $DATABASE_URL
+npm run db:seed     # plans (trial/pro/power) — signup fails without these
+```
+
+Local database:
+
+```bash
+docker run -d --name trg-dev-db -e POSTGRES_PASSWORD=postgres \
+  -e POSTGRES_DB=tailored_resume -p 5433:5432 postgres:17-alpine
+cp .env.example .env   # then npm run db:migrate && npm run db:seed
 ```
 
 **Never register the design system's spacing scale under Tailwind's
