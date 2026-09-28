@@ -54,9 +54,13 @@ breakpoint or the cache never hits.
 - **Stripe** — subscriptions, checkout, and the customer portal. Webhooks are the
   source of truth for plan state; never infer entitlement from a checkout
   redirect.
-- **Email** — verification (required before the first generation, see
-  [ADR-0004](decisions/0004-pricing-and-quota.md)) and billing notices. Provider
-  not yet chosen.
+- **Email** — **Resend**. Verification (required before the first generation, see
+  [ADR-0004](decisions/0004-pricing-and-quota.md)) and billing notices. Chosen
+  for the simplest Node SDK and a free tier (3k/month, 100/day) that covers
+  early volume; needs DNS records on a domain we own. Behind a `Mailer`
+  interface in `src/lib/email/`, so replacing it is one adapter. Development
+  falls back to a console transport that logs the link, so the flow is
+  completable without an account.
 
 ## Rejected alternatives
 
@@ -85,6 +89,15 @@ credentials + JWT setup. Revisit when OAuth providers are added.
 
 **Redis-backed queue (BullMQ).** A second piece of infrastructure for a workload
 measured in jobs per minute. Postgres is already there.
+
+**Postmark and AWS SES for email.** Postmark has the better deliverability
+reputation but is paid from day one (~$15/mo for 10k) for a product that sends a
+handful of transactional messages per signup. SES is the cheapest at volume but
+starts sandboxed — it can only send to pre-verified addresses until AWS grants
+production access, which is a launch-blocking approval step on an otherwise
+trivial feature, and it leaves sender reputation to us. Revisit Postmark if
+Resend's deliverability disappoints; the `Mailer` interface makes it a one-file
+change.
 
 **Downgrading the model to save cost.** Output quality is the entire product.
 Cut scope, not model. Cache briefs and tighten quotas instead.
